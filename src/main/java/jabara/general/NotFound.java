@@ -30,6 +30,10 @@ public class NotFound extends Exception {
         super(pMessage);
     }
 
+    /**
+     * 
+     * @author jabaraster
+     */
     public static final class Global extends NotFound {
         private static final long serialVersionUID = 136537340442992668L;
 

@@ -19,7 +19,7 @@ public final class IoUtil {
     /**
      * @param pBase
      * @param pLocation
-     * @return
+     * @return ストリーム.
      */
     @SuppressWarnings("resource")
     public static BufferedInputStream getResourceAsStream(final Class<?> pBase, final String pLocation) {
