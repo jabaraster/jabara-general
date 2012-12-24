@@ -31,7 +31,6 @@ public class NotFound extends Exception {
     }
 
     /**
-     * 
      * @author jabaraster
      */
     public static final class Global extends NotFound {

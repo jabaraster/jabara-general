@@ -4,6 +4,8 @@
 package jabara.general;
 
 import java.io.BufferedInputStream;
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -14,6 +16,20 @@ public final class IoUtil {
 
     private IoUtil() {
         //
+    }
+
+    /**
+     * @param pC
+     */
+    public static void close(final Closeable pC) {
+        if (pC == null) {
+            return;
+        }
+        try {
+            pC.close();
+        } catch (final IOException e) {
+            // 処理なし
+        }
     }
 
     /**
