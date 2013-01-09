@@ -13,7 +13,6 @@ import java.util.List;
  * @author jabaraster
  */
 public final class ReflectionUtil {
-
     private ReflectionUtil() {
         // 処理なし
     }
@@ -54,5 +53,71 @@ public final class ReflectionUtil {
         } catch (final IllegalAccessException e) {
             throw ExceptionUtil.rethrow(e);
         }
+    }
+
+    /**
+     * {@link Object}クラスにて定義されているメソッドかどうかをチェックします.
+     * 
+     * @param pMethod チェック対象メソッド.
+     * @return Objectクラスで定義されているメソッドであればtrue.
+     */
+    public static boolean isObjectMethod(final Method pMethod) {
+        ArgUtil.checkNull(pMethod, "pMethod"); //$NON-NLS-1$
+
+        if (pMethod.getDeclaringClass().equals(Object.class)) {
+            return true;
+        }
+
+        final Class<?>[] argumentTypes = pMethod.getParameterTypes();
+        if (isHashCodeCore(pMethod, argumentTypes)) {
+            return true;
+        }
+        if (isToStringCore(pMethod, argumentTypes)) {
+            return true;
+        }
+        if (isEqualsCore(pMethod, argumentTypes)) {
+            return true;
+        }
+
+        // getClass()はfinalなので最初のチェックでひっかかる.
+        // wait(),notify(),notifyAll()も同様.
+
+        return false;
+    }
+
+    private static boolean isEqualsCore(final Method pMethod, final Class<?>[] pArgumentTypes) {
+        if (!"equals".equals(pMethod.getName())) { //$NON-NLS-1$
+            return false;
+        }
+        if (pArgumentTypes == null) {
+            return false;
+        }
+        if (pArgumentTypes.length != 1) {
+            return false;
+        }
+        if (Object.class.equals(pArgumentTypes[0])) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isHashCodeCore(final Method pMethod, final Class<?>[] pArgumentTypes) {
+        if (!"hashCode".equals(pMethod.getName())) { //$NON-NLS-1$
+            return false;
+        }
+        if (pArgumentTypes == null || pArgumentTypes.length == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isToStringCore(final Method pMethod, final Class<?>[] pArgumentTypes) {
+        if (!"toString".equals(pMethod.getName())) { //$NON-NLS-1$
+            return false;
+        }
+        if (pArgumentTypes == null || pArgumentTypes.length == 0) {
+            return true;
+        }
+        return false;
     }
 }
