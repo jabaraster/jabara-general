@@ -40,6 +40,7 @@ public final class IoUtil {
      * @param pLocation 位置.
      * @return ストリーム.
      */
+    @SuppressWarnings("resource")
     public static BufferedInputStream getResourceAsStream(final Class<?> pBase, final String pLocation) {
         final InputStream in = pBase.getResourceAsStream(pLocation);
         if (in == null) {

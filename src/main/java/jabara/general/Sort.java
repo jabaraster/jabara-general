@@ -31,11 +31,8 @@ public abstract class Sort implements Serializable {
      */
     @SuppressWarnings("nls")
     private Sort(final String pColumnName, final SortRule pSortRule) {
-        ArgUtil.checkNullOrEmpty(pColumnName, "pColumnName");
-        ArgUtil.checkNull(pSortRule, "pSortRule");
-
-        this.columnName = pColumnName;
-        this.sortRule = pSortRule;
+        this.columnName = ArgUtil.checkNullOrEmpty(pColumnName, "pColumnName");
+        this.sortRule = ArgUtil.checkNull(pSortRule, "pSortRule");
 
         this.tostring = this.getClass().getName() + //
                 "[columnName=" + this.columnName + //
