@@ -6,6 +6,8 @@ package jabara.general;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,27 @@ public final class ReflectionUtil {
             }
         }
         return ret;
+    }
+
+    /**
+     * @param pType 調査対象の型.
+     * @return pTypeに唯一設定されている具体的な型パラメータ型.
+     * @throws NotFound 見付からなかった場合.
+     */
+    public static Class<?> getConcreteParameterType(final Class<?> pType) throws NotFound {
+        ArgUtil.checkNull(pType, "pType"); //$NON-NLS-1$
+
+        for (Class<?> sc = pType; !Object.class.equals(sc); sc = sc.getSuperclass()) {
+            final Type sup = sc.getGenericSuperclass();
+            if (sup instanceof ParameterizedType) {
+                final Type[] types = ((ParameterizedType) sup).getActualTypeArguments();
+                if (types.length == 1 && types[0] instanceof Class) {
+                    return (Class<?>) types[0];
+                }
+            }
+        }
+
+        throw NotFound.GLOBAL;
     }
 
     /**
