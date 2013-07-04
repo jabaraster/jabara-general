@@ -108,6 +108,26 @@ public final class ReflectionUtil {
         return false;
     }
 
+    /**
+     * デフォルトコンストラクタを使ってインスタンスを生成します.
+     * 
+     * @param pType インスタンスを生成するオブジェクトの型. <br>
+     *            引数なしのpublicコンストラクタが定義されていなければいけません. <br>
+     * @param <T> インスタンスを生成するオブジェクトの型.
+     * @return 新しいインスタンス.
+     * @throws IllegalStateException {@link Class#newInstance()}メソッドがスローする{@link InstantiationException}、あるいは{@link IllegalAccessException}
+     *             が内包されている可能性があります.
+     */
+    public static <T> T newInstance(final Class<T> pType) {
+        try {
+            return ArgUtil.checkNull(pType, "pType").newInstance(); //$NON-NLS-1$
+        } catch (final InstantiationException e) {
+            throw ExceptionUtil.rethrow(e);
+        } catch (final IllegalAccessException e) {
+            throw ExceptionUtil.rethrow(e);
+        }
+    }
+
     private static boolean isEqualsCore(final Method pMethod, final Class<?>[] pArgumentTypes) {
         if (!"equals".equals(pMethod.getName())) { //$NON-NLS-1$
             return false;
