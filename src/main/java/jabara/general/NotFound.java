@@ -24,7 +24,7 @@ public class NotFound extends Exception {
     }
 
     /**
-     * @param pMessage
+     * @param pMessage 例外メッセージ.
      */
     public NotFound(final String pMessage) {
         super(pMessage);

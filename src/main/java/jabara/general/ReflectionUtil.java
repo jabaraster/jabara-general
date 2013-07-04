@@ -6,6 +6,8 @@ package jabara.general;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,6 @@ import java.util.List;
  * @author jabaraster
  */
 public final class ReflectionUtil {
-
     private ReflectionUtil() {
         // 処理なし
     }
@@ -40,6 +41,27 @@ public final class ReflectionUtil {
     }
 
     /**
+     * @param pType 調査対象の型.
+     * @return pTypeに唯一設定されている具体的な型パラメータ型.
+     * @throws NotFound 見付からなかった場合.
+     */
+    public static Class<?> getConcreteParameterType(final Class<?> pType) throws NotFound {
+        ArgUtil.checkNull(pType, "pType"); //$NON-NLS-1$
+
+        for (Class<?> sc = pType; !Object.class.equals(sc); sc = sc.getSuperclass()) {
+            final Type sup = sc.getGenericSuperclass();
+            if (sup instanceof ParameterizedType) {
+                final Type[] types = ((ParameterizedType) sup).getActualTypeArguments();
+                if (types.length == 1 && types[0] instanceof Class) {
+                    return (Class<?>) types[0];
+                }
+            }
+        }
+
+        throw NotFound.GLOBAL;
+    }
+
+    /**
      * @param pObject -
      * @param pMethod -
      * @param pArguments -
@@ -54,5 +76,91 @@ public final class ReflectionUtil {
         } catch (final IllegalAccessException e) {
             throw ExceptionUtil.rethrow(e);
         }
+    }
+
+    /**
+     * {@link Object}クラスにて定義されているメソッドかどうかをチェックします.
+     * 
+     * @param pMethod チェック対象メソッド.
+     * @return Objectクラスで定義されているメソッドであればtrue.
+     */
+    public static boolean isObjectMethod(final Method pMethod) {
+        ArgUtil.checkNull(pMethod, "pMethod"); //$NON-NLS-1$
+
+        if (pMethod.getDeclaringClass().equals(Object.class)) {
+            return true;
+        }
+
+        final Class<?>[] argumentTypes = pMethod.getParameterTypes();
+        if (isHashCodeCore(pMethod, argumentTypes)) {
+            return true;
+        }
+        if (isToStringCore(pMethod, argumentTypes)) {
+            return true;
+        }
+        if (isEqualsCore(pMethod, argumentTypes)) {
+            return true;
+        }
+
+        // getClass()はfinalなので最初のチェックでひっかかる.
+        // wait(),notify(),notifyAll()も同様.
+
+        return false;
+    }
+
+    /**
+     * デフォルトコンストラクタを使ってインスタンスを生成します.
+     * 
+     * @param pType インスタンスを生成するオブジェクトの型. <br>
+     *            引数なしのpublicコンストラクタが定義されていなければいけません. <br>
+     * @param <T> インスタンスを生成するオブジェクトの型.
+     * @return 新しいインスタンス.
+     * @throws IllegalStateException {@link Class#newInstance()}メソッドがスローする{@link InstantiationException}、あるいは{@link IllegalAccessException}
+     *             が内包されている可能性があります.
+     */
+    public static <T> T newInstance(final Class<T> pType) {
+        try {
+            return ArgUtil.checkNull(pType, "pType").newInstance(); //$NON-NLS-1$
+        } catch (final InstantiationException e) {
+            throw ExceptionUtil.rethrow(e);
+        } catch (final IllegalAccessException e) {
+            throw ExceptionUtil.rethrow(e);
+        }
+    }
+
+    private static boolean isEqualsCore(final Method pMethod, final Class<?>[] pArgumentTypes) {
+        if (!"equals".equals(pMethod.getName())) { //$NON-NLS-1$
+            return false;
+        }
+        if (pArgumentTypes == null) {
+            return false;
+        }
+        if (pArgumentTypes.length != 1) {
+            return false;
+        }
+        if (Object.class.equals(pArgumentTypes[0])) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isHashCodeCore(final Method pMethod, final Class<?>[] pArgumentTypes) {
+        if (!"hashCode".equals(pMethod.getName())) { //$NON-NLS-1$
+            return false;
+        }
+        if (pArgumentTypes == null || pArgumentTypes.length == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isToStringCore(final Method pMethod, final Class<?>[] pArgumentTypes) {
+        if (!"toString".equals(pMethod.getName())) { //$NON-NLS-1$
+            return false;
+        }
+        if (pArgumentTypes == null || pArgumentTypes.length == 0) {
+            return true;
+        }
+        return false;
     }
 }
