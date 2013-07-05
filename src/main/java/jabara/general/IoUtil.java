@@ -54,7 +54,6 @@ public final class IoUtil {
      * @param pLocation 位置.
      * @return ストリーム.
      */
-    @SuppressWarnings("resource")
     public static BufferedInputStream getResourceAsStream(final Class<?> pBase, final String pLocation) {
         ArgUtil.checkNull(pBase, "pBase"); //$NON-NLS-1$
         ArgUtil.checkNull(pLocation, "pLocation"); //$NON-NLS-1$
@@ -93,8 +92,8 @@ public final class IoUtil {
     }
 
     /**
-     * @param pIn
-     * @param pEncoding
+     * @param pIn -
+     * @param pEncoding -
      * @return pInによって読み取れるデータをpEncodingで指定された符号化方式で文字列に変換した結果.
      * @throws IOException -
      */
@@ -105,11 +104,11 @@ public final class IoUtil {
     }
 
     /**
-     * @param pIn
-     * @param pEncoding
-     * @param pBufferSize
+     * @param pIn -
+     * @param pEncoding -
+     * @param pBufferSize -
      * @return pInによって読み取れるデータをpEncodingで指定された符号化方式で文字列に変換した結果.
-     * @throws IOException
+     * @throws IOException -
      */
     public static String toString(final InputStream pIn, final Charset pEncoding, final int pBufferSize) throws IOException {
         ArgUtil.checkNull(pIn, "pIn"); //$NON-NLS-1$
