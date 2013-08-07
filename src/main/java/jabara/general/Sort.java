@@ -26,11 +26,11 @@ public abstract class Sort implements Serializable {
     private final int         hash;
 
     /**
-     * @param pColumnName
-     * @param pSortRule
+     * @param pColumnName -
+     * @param pSortRule -
      */
     @SuppressWarnings("nls")
-    private Sort(final String pColumnName, final SortRule pSortRule) {
+    public Sort(final String pColumnName, final SortRule pSortRule) {
         this.columnName = ArgUtil.checkNullOrEmpty(pColumnName, "pColumnName");
         this.sortRule = ArgUtil.checkNull(pSortRule, "pSortRule");
 
