@@ -151,7 +151,6 @@ public abstract class Sort implements Serializable {
         /**
          * @param pColumnName 列名
          */
-        @SuppressWarnings("synthetic-access")
         private Asc(final String pColumnName) {
             super(pColumnName, SortRule.ASC);
         }
@@ -168,7 +167,6 @@ public abstract class Sort implements Serializable {
         /**
          * @param pColumnName 列名
          */
-        @SuppressWarnings("synthetic-access")
         private Desc(final String pColumnName) {
             super(pColumnName, SortRule.DESC);
         }

@@ -7,8 +7,9 @@ package jabara.general;
  * @author jabaraster
  */
 public class ObjectHolder<V> implements IProducer<V>, IProducer2<Object, V> {
+    private static final long serialVersionUID = 9059050748330288741L;
 
-    private V value;
+    private V                 value;
 
     /**
      * 
