@@ -27,12 +27,11 @@ public enum SortRule implements ILabelable {
     }
 
     /**
-     * @see jabara.general.ILabelable#getLabel(java.util.Locale)
+     * @see jabara.general.ILabelable#getLabel(Locale)
      */
     @Override
     public String getLabel(final Locale pLocale) {
         ArgUtil.checkNull(pLocale, "pLocale"); //$NON-NLS-1$
         return ResourceBundle.getBundle(SortRule.class.getName(), pLocale).getString(toString());
     }
-
 }

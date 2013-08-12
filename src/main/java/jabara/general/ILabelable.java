@@ -16,7 +16,7 @@ public interface ILabelable {
     String getLabel();
 
     /**
-     * @param pLocale
+     * @param pLocale -
      * @return -
      */
     String getLabel(Locale pLocale);
