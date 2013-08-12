@@ -14,7 +14,7 @@ import java.io.Serializable;
  * 
  * @author 河野
  */
-public abstract class Sort implements Serializable {
+public class Sort implements Serializable {
 
     private static final long serialVersionUID = -594331134048001098L;
 
