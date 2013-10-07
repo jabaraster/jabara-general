@@ -21,8 +21,8 @@ public class NameValue<V> implements Serializable {
     private final String      toString;
 
     /**
-     * @param pName
-     * @param pValue
+     * @param pName -
+     * @param pValue -
      */
     public NameValue(final String pName, final V pValue) {
         this.name = pName;

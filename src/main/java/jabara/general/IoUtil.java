@@ -53,6 +53,8 @@ public final class IoUtil {
      * @param pBase 位置の起点.
      * @param pLocation 位置.
      * @return ストリーム.
+     * @throws IllegalStateException リソースが見付からなかった場合.
+     * @see Class#getResourceAsStream(String)
      */
     @SuppressWarnings("resource")
     public static BufferedInputStream getResourceAsStream(final Class<?> pBase, final String pLocation) {
@@ -63,7 +65,25 @@ public final class IoUtil {
         if (in == null) {
             throw new IllegalStateException("Resource not found. base -> " + pBase.getName() + ", location -> " + pLocation); //$NON-NLS-1$//$NON-NLS-2$
         }
-        return (BufferedInputStream) (in instanceof BufferedInputStream ? in : new BufferedInputStream(in));
+        return toBuffered(in);
+    }
+
+    /**
+     * @param pBase 位置の起点.
+     * @param pLocation 位置.
+     * @return ストリーム.
+     * @throws NotFound リソースが見付からかなかった場合.
+     * @see Class#getResourceAsStream(String)
+     */
+    @SuppressWarnings("resource")
+    public static InputStream getResourceAsStreamSafety(final Class<?> pBase, final String pLocation) throws NotFound {
+        ArgUtil.checkNull(pBase, "pBase"); //$NON-NLS-1$
+        ArgUtil.checkNull(pLocation, "pLocation"); //$NON-NLS-1$
+        final InputStream ret = pBase.getResourceAsStream(pLocation);
+        if (ret == null) {
+            throw NotFound.GLOBAL;
+        }
+        return toBuffered(ret);
     }
 
     /**
