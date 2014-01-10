@@ -49,7 +49,7 @@ public class DataOperation implements Serializable {
      * @return -
      */
     public boolean hasData() {
-        return this.data == null;
+        return this.data != null;
     }
 
     /**
