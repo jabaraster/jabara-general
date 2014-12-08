@@ -11,6 +11,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * 
@@ -135,6 +139,49 @@ public final class IoUtil {
         ArgUtil.checkNull(pIn, "pIn"); //$NON-NLS-1$
         ArgUtil.checkNull(pEncoding, "pEncoding"); //$NON-NLS-1$
         return toStringCore(toBuffered(pIn), pEncoding, pBufferSize);
+    }
+
+    /**
+     * データを移送しながらダイジェスト値を計算します. <br>
+     * このメソッドの中でストリームを閉じることはありません. <br>
+     * 
+     * @param pIn データ読み込み元
+     * @param pOut データ書き込み先
+     * @param pDigestAlgorithm ダイジェストアルゴリズム.
+     * @return 移送したデータの長さとダイジェスト値.
+     * @throws IOException データ移送中の例外.
+     * @throws IllegalStateException ダイジェストアルゴリズムが見付からない場合.
+     */
+    @SuppressWarnings("resource")
+    public static DataMeta write(final InputStream pIn, final OutputStream pOut, final String pDigestAlgorithm) throws IOException {
+        ArgUtil.checkNull(pIn, "pIn"); //$NON-NLS-1$
+        ArgUtil.checkNull(pOut, "pOut"); //$NON-NLS-1$
+        ArgUtil.checkNullOrEmpty(pDigestAlgorithm, "pDigestAlgorithm"); //$NON-NLS-1$
+
+        final MessageDigest digester = getMessageDigest(pDigestAlgorithm);
+        final BufferedOutputStream bufOut = IoUtil.toBuffered(pOut);
+        final BufferedInputStream bufIn = IoUtil.toBuffered(pIn);
+        final byte[] buf = new byte[4096];
+
+        long length = 0;
+        for (int d = bufIn.read(buf); d != -1; d = bufIn.read(buf)) {
+            length += d;
+            bufOut.write(buf, 0, d);
+            digester.update(buf, 0, d);
+        }
+
+        bufOut.flush();
+
+        final String hash = DatatypeConverter.printHexBinary(digester.digest());
+        return new DataMeta(hash, length);
+    }
+
+    private static MessageDigest getMessageDigest(final String pDigestAlgorithm) {
+        try {
+            return MessageDigest.getInstance(pDigestAlgorithm);
+        } catch (final NoSuchAlgorithmException e) {
+            throw ExceptionUtil.rethrow(e);
+        }
     }
 
     private static String toStringCore(final InputStream pIn, final Charset pEncoding, final int pBufferSize) throws IOException {

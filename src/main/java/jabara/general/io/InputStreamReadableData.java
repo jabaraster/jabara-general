@@ -41,6 +41,8 @@ public class InputStreamReadableData implements IReadableData {
     }
 
     /**
+     * コンストラクタで渡された{@link InputStream}オブジェクトそのものを返します. <br>
+     * 
      * @see jabara.general.io.IReadableData#getInputStream()
      */
     @Override
