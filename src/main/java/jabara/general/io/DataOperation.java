@@ -19,7 +19,7 @@ public class DataOperation implements Serializable {
      */
     public DataOperation(final Operation pOperation, final IReadableData pData) {
         ArgUtil.checkNull(pOperation, "pOperation"); //$NON-NLS-1$
-        if (this.operation == Operation.UPDATE && pData == null) {
+        if (pOperation == Operation.UPDATE && pData == null) {
             throw new IllegalArgumentException("pOperationがUPDATEのとき、pDataはnullであってはいけません."); //$NON-NLS-1$
         }
 
